@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        /* Global Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #6dd5ed, #2193b0);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        /* Input and Button Styling */
+        input {
+            font-size: 18px;
+            padding: 12px;
+            width: 300px;
+            border: none;
+            border-radius: 25px;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        input:focus {
+            transform: scale(1.05);
+            box-shadow: 2px 2px 15px rgba(255, 255, 255, 0.4);
+        }
+
+        button {
+            font-size: 18px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            background: #ffcc70;
+            color: #333;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background: #ff9f43;
+            transform: scale(1.1);
+            box-shadow: 2px 2px 15px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Weather Display */
+        #weather-container {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            display: inline-block;
+            min-width: 350px;
+            backdrop-filter: blur(10px);
+        }
+
+        #temperature {
+            font-size: 80px;
+            font-weight: bold;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        #emoji {
+            font-size: 100px;
+            animation: bounce 2s infinite;
+        }
+
+        #description {
+            font-size: 30px;
+            font-style: italic;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Check the Weather</h1>
+    <input type="text" id="city" placeholder="Enter city name">
+    <button onclick="getWeather()">Get Weather</button>
+    
+    <div id="weather-container">
+        <div id="temperature">🌡️</div>
+        <div id="emoji">☀️</div>
+        <div id="description">Your forecast awaits...</div>
+    </div>
+
+    <script>
+        function getWeather() {
+            const city = document.getElementById('city').value;
+            if (!city) {
+                alert("Please enter a city name.");
+                return;
+            }
+
+            fetch('/get_weather', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ city: city })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('temperature').innerText = `${data.temperature}°C`;
+                    document.getElementById('emoji').innerText = data.emoji;
+                    document.getElementById('description').innerText = data.description;
+                })
+                .catch(error => {
+                    document.getElementById('temperature').innerText = '❌';
+                    document.getElementById('emoji').innerText = '⚠️';
+                    document.getElementById('description').innerText = 'Could not fetch weather!';
+                });
+        }
+    </script>
+</body>
+</html>
